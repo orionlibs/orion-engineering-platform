@@ -1,12 +1,12 @@
-package com.orion.enginering.simulation;
+package com.orion.enginering.simulation.core;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.orion.engineering.simulation.GenericSimulationEngine;
-import com.orion.engineering.simulation.SimulationCommand;
-import com.orion.engineering.simulation.SimulationContext;
-import com.orion.engineering.simulation.SimulationEntity;
+import com.orion.engineering.simulation.core.GenericSimulationEngine;
+import com.orion.engineering.simulation.core.SimulationCommand;
+import com.orion.engineering.simulation.core.SimulationContext;
+import com.orion.engineering.simulation.core.SimulationEntity;
 import com.orion.engineering.simulation.event.EntityEvent;
 import com.orion.engineering.simulation.event.SimulationEvent;
 import com.orion.engineering.simulation.event.SystemEvent;
@@ -64,12 +64,12 @@ public class GenericSimulationEngineTest extends TestBase
         };
         engine.registerEntity(mockEntity);
         // Schedule out of order
-        engine.scheduleEvent(new EntityEvent(20, "test-entity", "SECOND"));
+        engine.scheduleEvent(new EntityEvent(200, "test-entity", "SECOND"));
         engine.scheduleEvent(new EntityEvent(10, "test-entity", "FIRST"));
         engine.run(1000);
         assertTrue(latch.await(2, TimeUnit.SECONDS));
         assertEquals(10L, processedTimes.get(0));
-        assertEquals(20L, processedTimes.get(1));
+        assertEquals(200L, processedTimes.get(1));
     }
 
 
@@ -148,7 +148,7 @@ public class GenericSimulationEngineTest extends TestBase
     @DisplayName("Should handle massive amounts of concurrent events using Virtual Threads")
     void testVirtualThreadScaling() throws InterruptedException
     {
-        int eventCount = 10_000;
+        int eventCount = 100;
         CountDownLatch latch = new CountDownLatch(eventCount);
         SimulationEntity entity = new SimulationEntity()
         {

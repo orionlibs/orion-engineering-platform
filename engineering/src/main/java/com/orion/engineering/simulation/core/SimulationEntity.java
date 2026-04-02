@@ -1,4 +1,4 @@
-package com.orion.engineering.simulation;
+package com.orion.engineering.simulation.core;
 
 import com.orion.engineering.simulation.event.SimulationEvent;
 

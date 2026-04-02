@@ -1,4 +1,4 @@
-package com.orion.engineering.simulation;
+package com.orion.engineering.simulation.core;
 
 import com.orion.engineering.simulation.event.EntityEvent;
 import com.orion.engineering.simulation.event.SimulationEvent;
@@ -42,27 +42,37 @@ public class GenericSimulationEngine implements AutoCloseable
     public void run(long duration)
     {
         running = true;
-        // Open the scope once. It captures the initial empty ScopedValue state.
-        try(var scope = StructuredTaskScope.open(Joiner.awaitAll(),
-                        config -> config.withThreadFactory(Thread.ofVirtual().factory())))
+        while(running && !eventQueue.isEmpty())
         {
-            while(running && !eventQueue.isEmpty())
+            SimulationEvent nextEvent = eventQueue.peek();
+            if(nextEvent.timestamp() > duration)
             {
-                SimulationEvent event = eventQueue.poll();
-                if(event.timestamp() > duration)
-                {
-                    break;
-                }
-                currentTime = event.timestamp();
-                processEvent(event, scope, currentTime);
+                break;
             }
-            // Wait for all spawned virtual threads to finish.
-            scope.join();
-        }
-        catch(InterruptedException e)
-        {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Simulation interrupted", e);
+            long batchTime = nextEvent.timestamp();
+            currentTime = batchTime;
+            // create a NEW scope for this specific timestamp/batch
+            try(var scope = StructuredTaskScope.open(Joiner.awaitAll(),
+                            config -> config.withThreadFactory(Thread.ofVirtual().factory())))
+            {
+                while(!eventQueue.isEmpty() && eventQueue.peek().timestamp() == batchTime)
+                {
+                    SimulationEvent event = eventQueue.poll();
+                    processEvent(event, scope, currentTime);
+                }
+                // Join this specific batch's scope
+                scope.join();
+            }
+            catch(InterruptedException e)
+            {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Simulation interrupted", e);
+            }
+            // Check if a SHUTDOWN event was processed in the last batch
+            if(!running)
+            {
+                break;
+            }
         }
     }
 
