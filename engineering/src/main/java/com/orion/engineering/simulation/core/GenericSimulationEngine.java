@@ -118,21 +118,6 @@ public class GenericSimulationEngine implements AutoCloseable
     }
 
 
-    // Helper method to keep things DRY (Don't Repeat Yourself)
-    private void handleTargetedEvent(String id, SimulationEvent e, StructuredTaskScope<Object, Void> scope, long time)
-    {
-        SimulationEntity entity = entities.get(id);
-        if(entity != null)
-        {
-            scope.fork(() -> ScopedValue.where(SimulationContext.CURRENT_TIME, time)
-                            .call(() -> {
-                                entity.onEvent(e);
-                                return null;
-                            }));
-        }
-    }
-
-
     @Override
     public void close()
     {
