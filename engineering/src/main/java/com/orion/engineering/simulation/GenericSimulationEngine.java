@@ -100,7 +100,7 @@ public class GenericSimulationEngine implements AutoCloseable
             }
             case SystemEvent s ->
             {
-                if("SHUTDOWN".equals(s.command()))
+                if(SimulationCommand.SHUTDOWN == s.command())
                 {
                     running = false;
                 }

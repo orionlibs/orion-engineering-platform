@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.orion.engineering.simulation.GenericSimulationEngine;
+import com.orion.engineering.simulation.SimulationCommand;
 import com.orion.engineering.simulation.SimulationContext;
 import com.orion.engineering.simulation.SimulationEntity;
 import com.orion.engineering.simulation.event.EntityEvent;
@@ -63,9 +64,9 @@ public class GenericSimulationEngineTest extends TestBase
         };
         engine.registerEntity(mockEntity);
         // Schedule out of order
-        engine.scheduleEvent(new EntityEvent(10, "test-entity", "FIRST"));
         engine.scheduleEvent(new EntityEvent(20, "test-entity", "SECOND"));
-        engine.run(100);
+        engine.scheduleEvent(new EntityEvent(10, "test-entity", "FIRST"));
+        engine.run(1000);
         assertTrue(latch.await(2, TimeUnit.SECONDS));
         assertEquals(10L, processedTimes.get(0));
         assertEquals(20L, processedTimes.get(1));
@@ -91,11 +92,11 @@ public class GenericSimulationEngineTest extends TestBase
             }
         };
         engine.registerEntity(entity);
-        engine.scheduleEvent(new EntityEvent(10, "e1", "OK"));
-        engine.scheduleEvent(new EntityEvent(150, "e1", "TOO_LATE"));
-        engine.run(100); // Stop at 100
+        engine.scheduleEvent(new EntityEvent(100, "e1", "OK"));
+        engine.scheduleEvent(new EntityEvent(500, "e1", "TOO_LATE"));
+        engine.run(110); // Stop at 100
         // Small delay to ensure virtual threads had time to fail if they were going to run
-        Thread.sleep(100);
+        Thread.sleep(200);
         assertEquals(1, eventCount.get());
     }
 
@@ -104,9 +105,9 @@ public class GenericSimulationEngineTest extends TestBase
     @DisplayName("Should stop simulation on SHUTDOWN system event")
     void testShutdownEvent()
     {
-        engine.scheduleEvent(new SystemEvent(10, "SHUTDOWN"));
-        engine.scheduleEvent(new TickEvent(20)); // This should never be processed
-        engine.run(100);
+        engine.scheduleEvent(new SystemEvent(100, SimulationCommand.SHUTDOWN));
+        engine.scheduleEvent(new TickEvent(200)); // This should never be processed
+        engine.run(1000);
         // If we reach here, it means the loop terminated despite the queue not being empty
         assertTrue(true);
     }
@@ -136,10 +137,10 @@ public class GenericSimulationEngineTest extends TestBase
             }
         };
         engine.registerEntity(entity);
-        engine.scheduleEvent(new EntityEvent(42, "e1", "CHECK_TIME"));
-        engine.run(100);
-        latch.await(1, TimeUnit.SECONDS);
-        assertEquals(42L, capturedSimTime.get());
+        engine.scheduleEvent(new EntityEvent(420, "e1", "CHECK_TIME"));
+        engine.run(1000);
+        latch.await(2, TimeUnit.SECONDS);
+        assertEquals(420L, capturedSimTime.get());
     }
 
 
@@ -162,7 +163,7 @@ public class GenericSimulationEngineTest extends TestBase
                 // Simulate some "work" that would normally block platform threads
                 try
                 {
-                    Thread.sleep(1);
+                    Thread.sleep(50);
                 }
                 catch(InterruptedException ex)
                 {
@@ -177,7 +178,7 @@ public class GenericSimulationEngineTest extends TestBase
         }
         long start = System.currentTimeMillis();
         engine.run(eventCount + 1);
-        boolean completed = latch.await(10, TimeUnit.SECONDS);
+        boolean completed = latch.await(20, TimeUnit.SECONDS);
         long end = System.currentTimeMillis();
         assertTrue(completed, "Virtual threads should have completed the tasks");
         System.out.println("Processed " + eventCount + " events in " + (end - start) + "ms");

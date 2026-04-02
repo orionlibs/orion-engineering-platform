@@ -1,6 +1,8 @@
 package com.orion.engineering.simulation.event;
 
-public record SystemEvent(long timestamp, String command) implements SimulationEvent
+import com.orion.engineering.simulation.SimulationCommand;
+
+public record SystemEvent(long timestamp, SimulationCommand command) implements SimulationEvent
 {
     @Override
     public int priority()
