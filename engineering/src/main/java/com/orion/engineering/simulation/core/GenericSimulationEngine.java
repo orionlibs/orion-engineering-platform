@@ -1,8 +1,8 @@
 package com.orion.engineering.simulation.core;
 
-import com.orion.engineering.simulation.event.EntityEvent;
 import com.orion.engineering.simulation.event.SimulationEvent;
 import com.orion.engineering.simulation.event.SystemEvent;
+import com.orion.engineering.simulation.event.TargetedEvent;
 import com.orion.engineering.simulation.event.TickEvent;
 import java.util.Comparator;
 import java.util.Map;
@@ -81,31 +81,28 @@ public class GenericSimulationEngine implements AutoCloseable
     {
         switch(event)
         {
-            case EntityEvent e ->
+            // The Engine routes ANY targeted event using the interface method
+            case TargetedEvent te ->
             {
-                SimulationEntity entity = entities.get(e.entityID());
+                SimulationEntity entity = entities.get(te.getTargetID());
                 if(entity != null)
                 {
-                    scope.fork(() -> {
-                        return ScopedValue.where(SimulationContext.CURRENT_TIME, timeAtEvent)
-                                        .call(() -> {
-                                            entity.onEvent(e);
-                                            return null;
-                                        });
-                    });
+                    scope.fork(() -> ScopedValue.where(SimulationContext.CURRENT_TIME, timeAtEvent)
+                                    .call(() -> {
+                                        entity.onEvent(te);
+                                        return null;
+                                    }));
                 }
             }
             case TickEvent t ->
             {
                 for(SimulationEntity entity : entities.values())
                 {
-                    scope.fork(() -> {
-                        return ScopedValue.where(SimulationContext.CURRENT_TIME, timeAtEvent)
-                                        .call(() -> {
-                                            entity.onEvent(t);
-                                            return null;
-                                        });
-                    });
+                    scope.fork(() -> ScopedValue.where(SimulationContext.CURRENT_TIME, timeAtEvent)
+                                    .call(() -> {
+                                        entity.onEvent(t);
+                                        return null;
+                                    }));
                 }
             }
             case SystemEvent s ->
@@ -115,7 +112,23 @@ public class GenericSimulationEngine implements AutoCloseable
                     running = false;
                 }
             }
+            // No more IllegalStateException for new domain events!
             default -> throw new IllegalStateException("Unexpected value: " + event);
+        }
+    }
+
+
+    // Helper method to keep things DRY (Don't Repeat Yourself)
+    private void handleTargetedEvent(String id, SimulationEvent e, StructuredTaskScope<Object, Void> scope, long time)
+    {
+        SimulationEntity entity = entities.get(id);
+        if(entity != null)
+        {
+            scope.fork(() -> ScopedValue.where(SimulationContext.CURRENT_TIME, time)
+                            .call(() -> {
+                                entity.onEvent(e);
+                                return null;
+                            }));
         }
     }
 
