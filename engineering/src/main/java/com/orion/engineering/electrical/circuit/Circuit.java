@@ -49,8 +49,6 @@ public class Circuit
 
     private boolean isVertexOnCycle(CircuitComponent start)
     {
-        // Multi-edges between any two vertices directly form a cycle — check first
-        // PatonCycleBase would choke on these, but we handle them explicitly here
         for(CircuitComponent other : graph.vertexSet())
         {
             if(!other.equals(start) && graph.getAllEdges(start, other).size() > 1)
@@ -106,7 +104,7 @@ public class Circuit
         graph.edgeSet().forEach(e -> {
             CircuitComponent src = graph.getEdgeSource(e);
             CircuitComponent tgt = graph.getEdgeTarget(e);
-            System.out.printf("  %s.%s ──── %s.%s%s%n",
+            System.out.printf("%s.%s ──── %s.%s%s%n",
                             src.getName(), e.getFromTerminal().getName(),
                             tgt.getName(), e.getToTerminal().getName(),
                             e.getFromTerminal() != null ? "  [" + e.getFromTerminal().getName() + "]" : "");
