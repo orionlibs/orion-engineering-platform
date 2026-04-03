@@ -24,14 +24,26 @@ public class CircuitTest extends TestBase
                         .voltage(Voltage.builder()
                                         .value(1.0d)
                                         .build())
-                        .positiveTerminal(new Terminal())
-                        .negativeTerminal(new Terminal())
+                        .positiveTerminal(Terminal.builder()
+                                        .name("+")
+                                        .isPositiveTerminal(true)
+                                        .build())
+                        .negativeTerminal(Terminal.builder()
+                                        .name("-")
+                                        .isPositiveTerminal(false)
+                                        .build())
                         .build();
         Wire wire1 = Wire.builder()
                         .name("wire")
                         .length(1.0d)
-                        .positiveTerminal(new Terminal())
-                        .negativeTerminal(new Terminal())
+                        .positiveTerminal(Terminal.builder()
+                                        .name("+")
+                                        .isPositiveTerminal(true)
+                                        .build())
+                        .negativeTerminal(Terminal.builder()
+                                        .name("-")
+                                        .isPositiveTerminal(false)
+                                        .build())
                         .build();
         Graph<CircuitComponent, TerminalToTerminalConnection> graph = GraphTypeBuilder.<CircuitComponent, TerminalToTerminalConnection>undirected()
                         .allowingMultipleEdges(true)   // two components can share multiple connections
@@ -51,6 +63,7 @@ public class CircuitTest extends TestBase
         Circuit circuit = Circuit.builder()
                         .graph(graph)
                         .build();
+        circuit.printCircuit();
         assertThat(circuit.isThereVoltageSource()).isTrue();
         assertThat(circuit.isClosed()).isTrue();
     }

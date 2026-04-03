@@ -1,16 +1,13 @@
 package com.orion.engineering.electrical.circuit.component;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@Builder
-@AllArgsConstructor
-public class Wire implements CircuitComponent
+@SuperBuilder
+public class Wire extends CircuitComponent
 {
     private double length;
     private Terminal positiveTerminal;
     private Terminal negativeTerminal;
-    private String name;
 }

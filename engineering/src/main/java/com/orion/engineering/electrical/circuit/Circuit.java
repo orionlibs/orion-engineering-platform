@@ -2,15 +2,13 @@ package com.orion.engineering.electrical.circuit;
 
 import com.orion.engineering.electrical.circuit.component.CircuitComponent;
 import com.orion.engineering.electrical.circuit.component.VoltageSource;
-import com.orion.engineering.electrical.circuit.component.Wire;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.jgrapht.Graph;
+import org.jgrapht.alg.cycle.PatonCycleBase;
+import org.jgrapht.alg.interfaces.CycleBasisAlgorithm.CycleBasis;
 
 @Getter
 @Builder
@@ -22,7 +20,7 @@ public class Circuit
 
     public boolean isThereVoltageSource()
     {
-        return components.stream().anyMatch(c -> c instanceof VoltageSource);
+        return graph.vertexSet().stream().anyMatch(c -> c instanceof VoltageSource);
     }
 
 
@@ -34,7 +32,7 @@ public class Circuit
 
     public boolean isClosed()
     {
-        Optional<CircuitComponent> voltageSourceWrap = components.stream()
+        Optional<CircuitComponent> voltageSourceWrap = graph.vertexSet().stream()
                         .filter(c -> c instanceof VoltageSource)
                         .findFirst();
         if(voltageSourceWrap.isPresent())
@@ -42,24 +40,11 @@ public class Circuit
             VoltageSource voltageSource = (VoltageSource)voltageSourceWrap.get();
             if(voltageSource.getVoltage().getValue() > 0.0d)
             {
-                for(TerminalToTerminalConnection connection : connections)
-                {
-                    Wire wireConnectedToVoltageSourceNegativeTerminal = null;
-                    if(connection.getFromTerminal() == voltageSource.getNegativeTerminal())
-                    {
-                        for(CircuitComponent component : components)
-                        {
-                            if(component instanceof Wire wire)
-                            {
-                                if(wire.getPositiveTerminal() == connection.getToTerminal() || wire.getNegativeTerminal() == connection.getToTerminal())
-                                {
-                                    wireConnectedToVoltageSourceNegativeTerminal = wire;
-                                }
-                            }
-                        }
-                    }
-                }
-                return true;
+                PatonCycleBase<CircuitComponent, TerminalToTerminalConnection> cycleFinder = new PatonCycleBase<>(graph);
+                CycleBasis<CircuitComponent, TerminalToTerminalConnection> basis = cycleFinder.getCycleBasis();
+                return basis.getCycles()
+                                .stream()
+                                .anyMatch(cycle -> cycle.contains(voltageSource));
             }
             else
             {
@@ -73,42 +58,18 @@ public class Circuit
     }
 
 
-    private Set<CircuitComponent> findComponentsConnectedTo(CircuitComponent component)
+    public void printCircuit()
     {
-        Set<CircuitComponent> connectedComponents = new HashSet<>();
-
-        for(TerminalToTerminalConnection connection : connections)
-        {
-            if(connection.getFromTerminal() == component.get)
-            {
-                for(CircuitComponent component : components)
-                {
-                    if(component instanceof Wire wire)
-                    {
-                        if(wire.getPositiveTerminal() == connection.getToTerminal() || wire.getNegativeTerminal() == connection.getToTerminal())
-                        {
-                            wireConnectedToVoltageSourceNegativeTerminal = wire;
-                        }
-                    }
-                }
-            }
-        }
-
-        return connectedComponents;
-    }
-
-
-    public void printCircuit() {
         System.out.println("=== Circuit Components ===");
-        graph.vertexSet().forEach(v -> System.out.println("  " + v));
+        graph.vertexSet().forEach(v -> System.out.println("  " + v.getName()));
         System.out.println("\n=== Connections ===");
         graph.edgeSet().forEach(e -> {
             CircuitComponent src = graph.getEdgeSource(e);
             CircuitComponent tgt = graph.getEdgeTarget(e);
             System.out.printf("  %s.%s ──── %s.%s%s%n",
-                            src.getName(), e.getFromTerminal(),
-                            tgt.getId(), e.getToTerminal(),
-                            e.getNetName() != null ? "  [" + e.getNetName() + "]" : "");
+                            src.getName(), e.getFromTerminal().getName(),
+                            tgt.getName(), e.getToTerminal().getName(),
+                            e.getFromTerminal() != null ? "  [" + e.getFromTerminal().getName() + "]" : "");
         });
     }
 }

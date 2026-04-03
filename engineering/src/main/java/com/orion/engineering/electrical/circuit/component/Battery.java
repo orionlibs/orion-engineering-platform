@@ -7,5 +7,4 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class Battery extends VoltageSource
 {
-
 }
