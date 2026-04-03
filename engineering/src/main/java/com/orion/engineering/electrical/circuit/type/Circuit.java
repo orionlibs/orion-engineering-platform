@@ -2,6 +2,7 @@ package com.orion.engineering.electrical.circuit.type;
 
 import com.orion.engineering.electrical.circuit.TerminalToTerminalConnection;
 import com.orion.engineering.electrical.circuit.component.CircuitComponent;
+import com.orion.engineering.electrical.circuit.component.Switch;
 import com.orion.engineering.electrical.circuit.component.VoltageSource;
 import java.util.HashSet;
 import java.util.Optional;
@@ -47,6 +48,13 @@ public abstract class Circuit
             VoltageSource voltageSource = (VoltageSource)voltageSourceWrap.get();
             if(voltageSource.getVoltage().getValue() > 0.0d)
             {
+                if(graph.vertexSet().stream()
+                                .filter(c -> c instanceof Switch)
+                                .filter(s -> !((Switch)s).isOn())
+                                .count() > 0)
+                {
+                    return false;
+                }
                 return isVertexOnCycle(voltageSource);
             }
         }

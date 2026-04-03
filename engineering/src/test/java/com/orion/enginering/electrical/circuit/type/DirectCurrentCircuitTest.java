@@ -7,6 +7,7 @@ import com.orion.engineering.electrical.circuit.TerminalToTerminalConnection;
 import com.orion.engineering.electrical.circuit.component.Battery;
 import com.orion.engineering.electrical.circuit.component.CircuitComponent;
 import com.orion.engineering.electrical.circuit.component.Lamp;
+import com.orion.engineering.electrical.circuit.component.Switch;
 import com.orion.engineering.electrical.circuit.component.Terminal;
 import com.orion.engineering.electrical.circuit.component.Wire;
 import com.orion.engineering.electrical.circuit.type.DirectCurrentCircuit;
@@ -159,6 +160,119 @@ public class DirectCurrentCircuitTest extends TestBase
         assertThat(circuit.isThereVoltageSource()).isTrue();
         assertThat(circuit.isClosed()).isTrue();
         graph.removeEdge(c4);
+        assertThat(circuit.isOpen()).isTrue();
+        circuit.stop();
+        assertThat(circuit.getLastRunDuration()).isGreaterThan(10_000L);
+    }
+
+
+    @Test
+    void simpleCircuitWithABatteryAndALampAndASwitch()
+    {
+        Wire wire1 = Wire.builder()
+                        .name("wire1")
+                        .length(1.0d)
+                        .positiveTerminal(Terminal.builder()
+                                        .name("+")
+                                        .isPositiveTerminal(true)
+                                        .build())
+                        .negativeTerminal(Terminal.builder()
+                                        .name("-")
+                                        .isPositiveTerminal(false)
+                                        .build())
+                        .build();
+        Switch switch1 = Switch.builder()
+                        .name("switch")
+                        .isOn(true)
+                        .positiveTerminal(Terminal.builder()
+                                        .name("+")
+                                        .isPositiveTerminal(true)
+                                        .build())
+                        .negativeTerminal(Terminal.builder()
+                                        .name("-")
+                                        .isPositiveTerminal(false)
+                                        .build())
+                        .build();
+        Wire wire2 = Wire.builder()
+                        .name("wire2")
+                        .length(1.0d)
+                        .positiveTerminal(Terminal.builder()
+                                        .name("+")
+                                        .isPositiveTerminal(true)
+                                        .build())
+                        .negativeTerminal(Terminal.builder()
+                                        .name("-")
+                                        .isPositiveTerminal(false)
+                                        .build())
+                        .build();
+        Lamp lamp = Lamp.builder()
+                        .name("lamp")
+                        .resistance(100)
+                        .positiveTerminal(Terminal.builder()
+                                        .name("+")
+                                        .isPositiveTerminal(true)
+                                        .build())
+                        .negativeTerminal(Terminal.builder()
+                                        .name("-")
+                                        .isPositiveTerminal(false)
+                                        .build())
+                        .build();
+        Wire wire3 = Wire.builder()
+                        .name("wire3")
+                        .length(1.0d)
+                        .positiveTerminal(Terminal.builder()
+                                        .name("+")
+                                        .isPositiveTerminal(true)
+                                        .build())
+                        .negativeTerminal(Terminal.builder()
+                                        .name("-")
+                                        .isPositiveTerminal(false)
+                                        .build())
+                        .build();
+        Graph<CircuitComponent, TerminalToTerminalConnection> graph = GraphTypeBuilder.<CircuitComponent, TerminalToTerminalConnection>undirected()
+                        .allowingMultipleEdges(true)   // two components can share multiple connections
+                        .allowingSelfLoops(false)
+                        .edgeClass(TerminalToTerminalConnection.class)
+                        .buildGraph();
+        graph.addVertex(battery);
+        graph.addVertex(wire1);
+        graph.addVertex(switch1);
+        graph.addVertex(wire2);
+        graph.addVertex(lamp);
+        graph.addVertex(wire3);
+        graph.addEdge(battery, wire1, TerminalToTerminalConnection.builder()
+                        .fromTerminal(battery.getNegativeTerminal())
+                        .toTerminal(wire1.getNegativeTerminal())
+                        .build());
+        graph.addEdge(wire1, switch1, TerminalToTerminalConnection.builder()
+                        .fromTerminal(wire1.getPositiveTerminal())
+                        .toTerminal(switch1.getPositiveTerminal())
+                        .build());
+        graph.addEdge(switch1, wire2, TerminalToTerminalConnection.builder()
+                        .fromTerminal(wire1.getNegativeTerminal())
+                        .toTerminal(lamp.getNegativeTerminal())
+                        .build());
+        graph.addEdge(wire2, lamp, TerminalToTerminalConnection.builder()
+                        .fromTerminal(lamp.getPositiveTerminal())
+                        .toTerminal(wire2.getPositiveTerminal())
+                        .build());
+        graph.addEdge(lamp, wire3, TerminalToTerminalConnection.builder()
+                        .fromTerminal(lamp.getNegativeTerminal())
+                        .toTerminal(wire3.getNegativeTerminal())
+                        .build());
+        TerminalToTerminalConnection c6 = TerminalToTerminalConnection.builder()
+                        .fromTerminal(wire3.getPositiveTerminal())
+                        .toTerminal(battery.getPositiveTerminal())
+                        .build();
+        graph.addEdge(wire3, battery, c6);
+        DirectCurrentCircuit circuit = DirectCurrentCircuit.builder()
+                        .graph(graph)
+                        .build();
+        circuit.printCircuit();
+        circuit.start();
+        assertThat(circuit.isThereVoltageSource()).isTrue();
+        assertThat(circuit.isClosed()).isTrue();
+        switch1.switchOff();
         assertThat(circuit.isOpen()).isTrue();
         circuit.stop();
         assertThat(circuit.getLastRunDuration()).isGreaterThan(10_000L);
