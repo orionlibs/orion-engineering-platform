@@ -14,6 +14,12 @@ public class Switch extends CircuitComponent
     protected boolean isOn;
 
 
+    public boolean isOff()
+    {
+        return !isOn;
+    }
+
+
     public void switchOn()
     {
         isOn = true;

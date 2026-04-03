@@ -50,7 +50,7 @@ public abstract class Circuit
             {
                 if(graph.vertexSet().stream()
                                 .filter(c -> c instanceof Switch)
-                                .filter(s -> !((Switch)s).isOn())
+                                .filter(s -> ((Switch)s).isOff())
                                 .count() > 0)
                 {
                     return false;
