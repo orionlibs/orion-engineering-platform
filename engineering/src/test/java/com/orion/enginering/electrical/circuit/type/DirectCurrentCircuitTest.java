@@ -3,12 +3,12 @@ package com.orion.enginering.electrical.circuit.type;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.orion.engineering.electrical.Voltage;
-import com.orion.engineering.electrical.circuit.type.DirectCurrentCircuit;
 import com.orion.engineering.electrical.circuit.TerminalToTerminalConnection;
 import com.orion.engineering.electrical.circuit.component.Battery;
 import com.orion.engineering.electrical.circuit.component.CircuitComponent;
 import com.orion.engineering.electrical.circuit.component.Terminal;
 import com.orion.engineering.electrical.circuit.component.Wire;
+import com.orion.engineering.electrical.circuit.type.DirectCurrentCircuit;
 import com.orion.enginering.TestBase;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
@@ -56,15 +56,22 @@ public class DirectCurrentCircuitTest extends TestBase
                         .fromTerminal(battery.getNegativeTerminal())
                         .toTerminal(wire1.getNegativeTerminal())
                         .build());
-        graph.addEdge(wire1, battery, TerminalToTerminalConnection.builder()
+        TerminalToTerminalConnection c2 = TerminalToTerminalConnection.builder()
                         .fromTerminal(wire1.getPositiveTerminal())
                         .toTerminal(battery.getPositiveTerminal())
-                        .build());
+                        .build();
+        graph.addEdge(wire1, battery, c2);
         DirectCurrentCircuit circuit = DirectCurrentCircuit.builder()
                         .graph(graph)
                         .build();
         circuit.printCircuit();
+        circuit.start();
         assertThat(circuit.isThereVoltageSource()).isTrue();
         assertThat(circuit.isClosed()).isTrue();
+        graph.removeEdge(c2);
+        assertThat(circuit.isOpen()).isTrue();
+        circuit.stop();
+        System.out.println(circuit.getLastRunDuration());
+        assertThat(circuit.getLastRunDuration()).isGreaterThan(1_000_000L);
     }
 }

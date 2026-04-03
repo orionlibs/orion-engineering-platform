@@ -9,6 +9,7 @@ import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.time.StopWatch;
 import org.jgrapht.Graph;
 
 @Getter
@@ -18,6 +19,10 @@ public abstract class Circuit
 {
     protected final Graph<CircuitComponent, TerminalToTerminalConnection> graph;
     protected boolean isRunning;
+    protected StopWatch stopwatch;
+    protected long lastRunDuration;
+    protected long lastRunStartTime;
+    protected long lastRunStopTime;
 
 
     public boolean isThereVoltageSource()
@@ -119,6 +124,8 @@ public abstract class Circuit
         if(isClosed())
         {
             isRunning = true;
+            stopwatch = StopWatch.createStarted();
+            lastRunStartTime = System.nanoTime();
         }
     }
 
@@ -128,6 +135,9 @@ public abstract class Circuit
         if(isRunning)
         {
             isRunning = false;
+            stopwatch.stop();
+            lastRunDuration = stopwatch.getNanoTime();
+            lastRunStopTime = System.nanoTime();
         }
     }
 }
