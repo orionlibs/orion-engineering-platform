@@ -1,21 +1,23 @@
-package com.orion.engineering.electrical.circuit;
+package com.orion.engineering.electrical.circuit.type;
 
+import com.orion.engineering.electrical.circuit.TerminalToTerminalConnection;
 import com.orion.engineering.electrical.circuit.component.CircuitComponent;
 import com.orion.engineering.electrical.circuit.component.VoltageSource;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import org.jgrapht.Graph;
 
 @Getter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
-public class Circuit
+public abstract class Circuit
 {
-    private final Graph<CircuitComponent, TerminalToTerminalConnection> graph;
+    protected final Graph<CircuitComponent, TerminalToTerminalConnection> graph;
+    protected boolean isRunning;
 
 
     public boolean isThereVoltageSource()
@@ -109,5 +111,23 @@ public class Circuit
                             tgt.getName(), e.getToTerminal().getName(),
                             e.getFromTerminal() != null ? "  [" + e.getFromTerminal().getName() + "]" : "");
         });
+    }
+
+
+    public void start()
+    {
+        if(isClosed())
+        {
+            isRunning = true;
+        }
+    }
+
+
+    public void stop()
+    {
+        if(isRunning)
+        {
+            isRunning = false;
+        }
     }
 }

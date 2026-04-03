@@ -1,9 +1,9 @@
-package com.orion.enginering.electrical.circuit;
+package com.orion.enginering.electrical.circuit.type;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.orion.engineering.electrical.Voltage;
-import com.orion.engineering.electrical.circuit.Circuit;
+import com.orion.engineering.electrical.circuit.type.DirectCurrentCircuit;
 import com.orion.engineering.electrical.circuit.TerminalToTerminalConnection;
 import com.orion.engineering.electrical.circuit.component.Battery;
 import com.orion.engineering.electrical.circuit.component.CircuitComponent;
@@ -14,7 +14,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.junit.jupiter.api.Test;
 
-public class CircuitTest extends TestBase
+public class DirectCurrentCircuitTest extends TestBase
 {
     @Test
     void simpleCircuit()
@@ -60,7 +60,7 @@ public class CircuitTest extends TestBase
                         .fromTerminal(wire1.getPositiveTerminal())
                         .toTerminal(battery.getPositiveTerminal())
                         .build());
-        Circuit circuit = Circuit.builder()
+        DirectCurrentCircuit circuit = DirectCurrentCircuit.builder()
                         .graph(graph)
                         .build();
         circuit.printCircuit();
