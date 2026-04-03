@@ -6,7 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class Wire extends CircuitComponent
 {
     private double length;

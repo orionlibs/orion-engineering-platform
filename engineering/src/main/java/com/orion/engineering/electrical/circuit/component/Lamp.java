@@ -4,10 +4,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
-@SuperBuilder
 @Getter
+@SuperBuilder
 @EqualsAndHashCode
-public abstract class CircuitComponent
+public class Lamp extends Resistor
 {
-    protected String name;
+
 }
