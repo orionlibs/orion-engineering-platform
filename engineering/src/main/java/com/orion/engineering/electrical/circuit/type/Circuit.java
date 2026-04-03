@@ -7,6 +7,7 @@ import com.orion.engineering.electrical.circuit.component.VoltageSource;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -48,45 +49,44 @@ public abstract class Circuit
             VoltageSource voltageSource = (VoltageSource)voltageSourceWrap.get();
             if(voltageSource.getVoltage().getValue() > 0.0d)
             {
-                if(graph.vertexSet().stream()
-                                .filter(c -> c instanceof Switch)
-                                .filter(s -> ((Switch)s).isOff())
-                                .count() > 0)
-                {
-                    return false;
-                }
-                return isVertexOnCycle(voltageSource);
+                // Build a set of vertices to exclude from traversal (off switches)
+                Set<CircuitComponent> excluded = graph.vertexSet().stream()
+                                .filter(c -> c instanceof Switch && ((Switch)c).isOff())
+                                .collect(Collectors.toSet());
+                return isVertexOnCycle(voltageSource, excluded);
             }
         }
         return false;
     }
 
 
-    private boolean isVertexOnCycle(CircuitComponent start)
+    private boolean isVertexOnCycle(CircuitComponent start, Set<CircuitComponent> excluded)
     {
+        // Multi-edge shortcut — but only if neither endpoint is excluded
         for(CircuitComponent other : graph.vertexSet())
         {
-            if(!other.equals(start) && graph.getAllEdges(start, other).size() > 1)
+            if(!other.equals(start)
+                            && !excluded.contains(other)
+                            && graph.getAllEdges(start, other).size() > 1)
             {
                 return true;
             }
         }
-        // DFS: try to find a path that leaves 'start' and comes back to it
         Set<CircuitComponent> visited = new HashSet<>();
-        return dfsFindsPathBack(start, start, null, visited);
+        return dfsFindsPathBack(start, start, null, visited, excluded);
     }
 
 
     private boolean dfsFindsPathBack(
                     CircuitComponent target,
                     CircuitComponent current,
-                    TerminalToTerminalConnection arrivedVia,   // edge we used to get here — don't backtrack on it
-                    Set<CircuitComponent> visited)
+                    TerminalToTerminalConnection arrivedVia,
+                    Set<CircuitComponent> visited,
+                    Set<CircuitComponent> excluded)
     {
         visited.add(current);
         for(TerminalToTerminalConnection edge : graph.edgesOf(current))
         {
-            // Skip the exact edge we arrived on to avoid trivially reversing one step
             if(edge.equals(arrivedVia))
             {
                 continue;
@@ -94,14 +94,15 @@ public abstract class Circuit
             CircuitComponent neighbor = graph.getEdgeSource(edge).equals(current)
                             ? graph.getEdgeTarget(edge)
                             : graph.getEdgeSource(edge);
-            // We reached the start again via a different path — cycle confirmed
+            // Found our way back to the start — cycle confirmed
             if(neighbor.equals(target) && arrivedVia != null)
             {
                 return true;
             }
-            if(!visited.contains(neighbor))
+            // Skip off-switches and already-visited vertices
+            if(!excluded.contains(neighbor) && !visited.contains(neighbor))
             {
-                if(dfsFindsPathBack(target, neighbor, edge, visited))
+                if(dfsFindsPathBack(target, neighbor, edge, visited, excluded))
                 {
                     return true;
                 }
