@@ -1,31 +1,3 @@
-Here is a fully invented platform concept you can use as a blueprint for a serious scientific and engineering software suite.
-
-# Platform name: **AstraForge Scientific Engineering Platform**
-
-**AstraForge** is a unified, enterprise-grade software platform for research, simulation, design, verification, experimentation, operations, and knowledge management across science and engineering domains. It is designed to support individual researchers, multidisciplinary teams, regulated industrial environments, and large-scale digital-twin and R&D programs.
-
-## 1) Core mission
-
-AstraForge is built to be a single environment for:
-
-* scientific computation
-* engineering design
-* simulation and modeling
-* data acquisition and instrument integration
-* experiment orchestration
-* digital twins
-* AI-assisted analysis
-* reproducible research
-* collaborative technical documentation
-* asset lifecycle management
-* deployment of validated models into operational systems
-
-It combines the rigor of a scientific workbench, the traceability of a regulated engineering system, and the extensibility of a modern cloud-native platform.
-
----
-
-# 2) Top-level feature architecture
-
 AstraForge is organized into these major layers:
 
 1. **Workspace layer** — projects, notebooks, models, experiments, assets, documents, and dashboards
