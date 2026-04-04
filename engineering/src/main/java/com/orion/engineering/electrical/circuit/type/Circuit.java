@@ -28,9 +28,6 @@ public abstract class Circuit
     protected long lastRunDuration;
     protected long lastRunStartTime;
     protected long lastRunStopTime;
-    // -------------------------------------------------------------------------
-    // Topology queries
-    // -------------------------------------------------------------------------
 
 
     public boolean isThereVoltageSource()
@@ -63,6 +60,8 @@ public abstract class Circuit
         }
         return false;
     }
+
+
     // -------------------------------------------------------------------------
     // Series detection
     //
@@ -122,6 +121,8 @@ public abstract class Circuit
             }
         }
     }
+
+
     // -------------------------------------------------------------------------
     // Parallel detection
     //
@@ -177,14 +178,12 @@ public abstract class Circuit
         }
         return groups;
     }
-    // -------------------------------------------------------------------------
-    // Shared helpers
-    // -------------------------------------------------------------------------
 
 
     private Set<CircuitComponent> getNeighbors(CircuitComponent component)
     {
-        return graph.edgesOf(component).stream()
+        return graph.edgesOf(component)
+                        .stream()
                         .map(e -> graph.getEdgeSource(e).equals(component)
                                         ? graph.getEdgeTarget(e)
                                         : graph.getEdgeSource(e))
@@ -239,9 +238,6 @@ public abstract class Circuit
         }
         return false;
     }
-    // -------------------------------------------------------------------------
-    // Lifecycle
-    // -------------------------------------------------------------------------
 
 
     public void start()
@@ -265,9 +261,6 @@ public abstract class Circuit
             lastRunStopTime = System.nanoTime();
         }
     }
-    // -------------------------------------------------------------------------
-    // Debug
-    // -------------------------------------------------------------------------
 
 
     public void printCircuit()
