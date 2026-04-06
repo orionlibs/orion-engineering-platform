@@ -9,6 +9,8 @@ import lombok.Getter;
 public class ThingCertificates
 {
     private UUID thingID;
-    private String certificateFile;
-    private String privateKeyFile;
+    private String deviceCertificate;
+    private String rootCertificateAuthorityCertificate;
+    private String privateKey;
+    private String publicKey;
 }

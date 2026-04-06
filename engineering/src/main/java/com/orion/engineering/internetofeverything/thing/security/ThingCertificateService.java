@@ -30,10 +30,16 @@ public class ThingCertificateService
         ThingCertificates certs = getThingCertificates(thingID);
         if(certs == null)
         {
+            String privateKey = thingCertificateGenerator.generatePrivateKey(policy);
+            String publicKey = thingCertificateGenerator.generatePublicKey(policy, privateKey);
+            String deviceCertificate = thingCertificateGenerator.generateDeviceCertificate(policy, privateKey);
+            String rootCertificateAuthorityCertificate = thingCertificateGenerator.generateRootCertificateAuthorityCertificate(policy, privateKey);
             certs = ThingCertificates.builder()
                             .thingID(thingID)
-                            .certificateFile(thingCertificateGenerator.generateCertificateFile(policy))
-                            .privateKeyFile(thingCertificateGenerator.generatePrivateKeyFile(policy))
+                            .deviceCertificate(deviceCertificate)
+                            .rootCertificateAuthorityCertificate(rootCertificateAuthorityCertificate)
+                            .privateKey(privateKey)
+                            .publicKey(publicKey)
                             .build();
             database.save(certs);
         }

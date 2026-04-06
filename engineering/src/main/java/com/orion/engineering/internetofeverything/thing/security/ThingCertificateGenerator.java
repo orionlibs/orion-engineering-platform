@@ -12,7 +12,25 @@ public class ThingCertificateGenerator
     }
 
 
-    public String generatePrivateKeyFile(ThingPolicy policy)
+    public String generatePublicKey(ThingPolicy policy, String privateKey)
+    {
+        return UUID.randomUUID().toString();
+    }
+
+
+    public String generatePrivateKey(ThingPolicy policy)
+    {
+        return UUID.randomUUID().toString();
+    }
+
+
+    public String generateDeviceCertificate(ThingPolicy policy, String privateKey)
+    {
+        return UUID.randomUUID().toString();
+    }
+
+
+    public String generateRootCertificateAuthorityCertificate(ThingPolicy policy, String privateKey)
     {
         return UUID.randomUUID().toString();
     }
