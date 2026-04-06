@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ThingPayloadReceiver implements ThingPayloadObservable
 {
-    @Autowired @Qualifier(value = "mockDatabase") private Database database;
     private final List<ThingPayloadObserver> observers = new ArrayList<>();
+    @Autowired @Qualifier(value = "mockDatabase") private Database database;
 
 
     @Override

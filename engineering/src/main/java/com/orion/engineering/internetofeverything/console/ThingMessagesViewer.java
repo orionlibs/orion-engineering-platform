@@ -5,6 +5,7 @@ import com.orion.engineering.internetofeverything.communication.ThingPayloadRece
 import com.orion.engineering.internetofeverything.communication.pubsub.IoEPubSubTopic;
 import com.orion.engineering.internetofeverything.thing.payload.ThingPayload;
 import com.orion.engineering.internetofeverything.thing.payload.ThingPayloadObserver;
+import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ThingMessagesViewer implements ThingPayloadObserver
 {
+    private final ThingPayloadReceiver thingPayloadReceiver;
     @Autowired private SimpMessagingTemplate messagingTemplate;
     private boolean shouldShowMessagesLIVE;
 
@@ -19,7 +21,15 @@ public class ThingMessagesViewer implements ThingPayloadObserver
     public ThingMessagesViewer(ThingPayloadReceiver thingPayloadReceiver)
     {
         this.shouldShowMessagesLIVE = true;
+        this.thingPayloadReceiver = thingPayloadReceiver;
         thingPayloadReceiver.addObserver(this);
+    }
+
+
+    @PreDestroy
+    public void onDestroy()
+    {
+        thingPayloadReceiver.removeObserver(this);
     }
 
 
