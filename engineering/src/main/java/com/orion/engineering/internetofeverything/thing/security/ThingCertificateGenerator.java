@@ -6,13 +6,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class ThingCertificateGenerator
 {
-    public String generateCertificateFile(UUID thingID)
+    public String generateCertificateFile(ThingPolicy policy)
     {
         return UUID.randomUUID().toString();
     }
 
 
-    public String generatePrivateKeyFile(UUID thingID)
+    public String generatePrivateKeyFile(ThingPolicy policy)
     {
         return UUID.randomUUID().toString();
     }

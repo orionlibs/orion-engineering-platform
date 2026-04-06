@@ -7,7 +7,6 @@ import com.orion.engineering.internetofeverything.thing.model.ThingData;
 import com.orion.engineering.internetofeverything.thing.model.ThingPlatform;
 import com.orion.engineering.internetofeverything.thing.model.ThingSDK;
 import com.orion.engineering.internetofeverything.thing.security.ThingCertificateService;
-import com.orion.engineering.internetofeverything.thing.security.ThingCertificates;
 import com.orion.engineering.internetofeverything.thing.security.ThingPolicy;
 import com.orion.engineering.internetofeverything.thing.security.ThingPolicyService;
 import java.util.UUID;
@@ -37,7 +36,6 @@ public class ThingService
         database.save(thing);
         ThingPolicy policy = thingPolicyService.addEmptyPolicyToThing(thing.getId());
         ThingConfiguration config = thingConfigurationService.addDefaultConfigurationToThing(thing.getId());
-        ThingCertificates certs = thingCertificateService.addCertificatesToThing(thing.getId());
         return getAllThingData(thing.getId());
     }
 
@@ -46,9 +44,9 @@ public class ThingService
     {
         return ThingData.builder()
                         .thing(database.getThingByID(thingID))
-                        .configuration(database.getThingConfigurationByID(thingID))
-                        .certificates(database.getThingCertificatesByID(thingID))
-                        .policy(database.getThingPolicyByID(thingID))
+                        .configuration(thingConfigurationService.getThingConfiguration(thingID))
+                        .certificates(thingCertificateService.getThingCertificates(thingID))
+                        .policy(thingPolicyService.getThingPolicy(thingID))
                         .build();
     }
 }
