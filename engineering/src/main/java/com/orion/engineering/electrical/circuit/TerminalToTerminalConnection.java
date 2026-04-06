@@ -14,8 +14,8 @@ import org.jgrapht.graph.DefaultEdge;
 @EqualsAndHashCode
 public class TerminalToTerminalConnection extends DefaultEdge
 {
-    private Terminal fromTerminal;
-    private Terminal toTerminal;
     @Builder.Default
     private final String id = UUID.randomUUID().toString();
+    private Terminal fromTerminal;
+    private Terminal toTerminal;
 }

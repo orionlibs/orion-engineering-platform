@@ -60,8 +60,6 @@ public abstract class Circuit
         }
         return false;
     }
-
-
     // -------------------------------------------------------------------------
     // Series detection
     //
@@ -121,8 +119,6 @@ public abstract class Circuit
             }
         }
     }
-
-
     // -------------------------------------------------------------------------
     // Parallel detection
     //

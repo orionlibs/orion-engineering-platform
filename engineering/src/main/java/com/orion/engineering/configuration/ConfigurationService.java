@@ -9,21 +9,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ConfigurationService {
-	@Autowired
-	private ConfigurationDAO dao;
+public class ConfigurationService
+{
+    @Autowired
+    private ConfigurationDAO dao;
 
-	public Optional<ConfigurationModel> getByKey(String key) {
-		return dao.findByKey(key);
-	}
 
-	@Transactional
-	public List<ConfigurationModel> getByType(String type) {
-		return dao.findAllByType(type);
-	}
+    public Optional<ConfigurationModel> getByKey(String key)
+    {
+        return dao.findByKey(key);
+    }
 
-	@Transactional
-	public ConfigurationModel save(ConfigurationModel model) {
-		return dao.save(model);
-	}
+
+    @Transactional
+    public List<ConfigurationModel> getByType(String type)
+    {
+        return dao.findAllByType(type);
+    }
+
+
+    @Transactional
+    public ConfigurationModel save(ConfigurationModel model)
+    {
+        return dao.save(model);
+    }
 }

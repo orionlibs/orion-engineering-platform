@@ -16,6 +16,5 @@ public class ProjectService
 
     public void updateProject(Project projectUpdated)
     {
-
     }
 }

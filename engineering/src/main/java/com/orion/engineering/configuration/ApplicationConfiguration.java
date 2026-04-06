@@ -7,10 +7,11 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "orion")
 @Data
-public class ApplicationConfiguration {
-	//private String bitbucketApiUsername;
-	//private String bitbucketApiToken;
-	//private String bitbucketApiBaseUrl;
+public class ApplicationConfiguration
+{
+    //private String bitbucketApiUsername;
+    //private String bitbucketApiToken;
+    //private String bitbucketApiBaseUrl;
 
 
     /*@Data
