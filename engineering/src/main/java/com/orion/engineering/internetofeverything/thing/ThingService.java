@@ -27,6 +27,7 @@ public class ThingService
     {
         Thing thing = Thing.builder()
                         .id(UUID.randomUUID())
+                        .uniqueResourceID(UUID.randomUUID().toString())
                         .name(name)
                         .description(description)
                         .type(type)

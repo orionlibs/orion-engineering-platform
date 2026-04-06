@@ -11,14 +11,14 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ThingMessagesPage implements ThingPayloadObserver
+public class ThingPayloadPage implements ThingPayloadObserver
 {
     private final ThingPayloadReceiver thingPayloadReceiver;
     @Autowired private SimpMessagingTemplate messagingTemplate;
     private boolean shouldShowMessagesLIVE;
 
 
-    public ThingMessagesPage(ThingPayloadReceiver thingPayloadReceiver)
+    public ThingPayloadPage(ThingPayloadReceiver thingPayloadReceiver)
     {
         this.shouldShowMessagesLIVE = true;
         this.thingPayloadReceiver = thingPayloadReceiver;

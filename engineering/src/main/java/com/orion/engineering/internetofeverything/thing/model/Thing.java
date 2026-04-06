@@ -9,6 +9,7 @@ import lombok.Getter;
 public class Thing
 {
     private UUID id;
+    private String uniqueResourceID;
     private String name;
     private String description;
     private String type;
