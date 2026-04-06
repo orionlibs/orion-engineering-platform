@@ -1,4 +1,4 @@
-package com.orion.engineering.internetofeverything.thing;
+package com.orion.engineering.internetofeverything.thing.model;
 
 import com.orion.engineering.internetofeverything.communication.CommunicationProtocol;
 import com.orion.engineering.internetofeverything.communication.DataPacket;

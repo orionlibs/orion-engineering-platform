@@ -1,4 +1,4 @@
-package com.orion.engineering.internetofeverything.thing;
+package com.orion.engineering.internetofeverything.thing.model;
 
 import java.util.UUID;
 import lombok.Builder;
