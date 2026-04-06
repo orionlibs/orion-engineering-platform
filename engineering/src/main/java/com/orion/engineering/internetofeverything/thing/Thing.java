@@ -3,6 +3,7 @@ package com.orion.engineering.internetofeverything.thing;
 import com.orion.engineering.internetofeverything.communication.CommunicationProtocol;
 import com.orion.engineering.internetofeverything.communication.DataPacket;
 import com.orion.engineering.internetofeverything.thing.security.ThingCertificates;
+import com.orion.engineering.internetofeverything.thing.security.ThingPolicy;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.UUID;
@@ -27,6 +28,7 @@ public class Thing
     private ThingPlatform platform;
     private ThingSDK sdk;
     private ThingCertificates certificates;
+    private ThingPolicy policy;
 
 
     public ThingDescriptor describe()

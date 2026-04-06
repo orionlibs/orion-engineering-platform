@@ -1,8 +1,4 @@
-package com.orion.engineering.internetofeverything.console;
-
-import com.orion.engineering.internetofeverything.thing.Thing;
-import com.orion.engineering.internetofeverything.thing.ThingPlatform;
-import com.orion.engineering.internetofeverything.thing.ThingSDK;
+package com.orion.engineering.internetofeverything.thing;
 
 public class ThingCreator
 {
