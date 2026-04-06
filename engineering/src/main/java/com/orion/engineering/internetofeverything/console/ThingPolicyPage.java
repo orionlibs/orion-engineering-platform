@@ -21,12 +21,24 @@ public class ThingPolicyPage
 
     public void addAllowedThingOperationToThingPolicy(UUID thingID, ThingOperation operation)
     {
-        thingPolicyService.addAllowedThingOperationToThingPolicy(thingID, operation);
+        thingPolicyService.addThingOperationToThingPolicy(thingID, operation);
     }
 
 
     public void removeAllowedThingOperationToThingPolicy(UUID thingID, ThingOperation operation)
     {
-        thingPolicyService.removeAllowedThingOperationToThingPolicy(thingID, operation);
+        thingPolicyService.removeThingOperationToThingPolicy(thingID, operation);
+    }
+
+
+    public void allowThingOperation(UUID thingID, ThingOperation operation)
+    {
+        thingPolicyService.allowThingOperation(thingID, operation);
+    }
+
+
+    public void forbidThingOperation(UUID thingID, ThingOperation operation)
+    {
+        thingPolicyService.forbidThingOperation(thingID, operation);
     }
 }

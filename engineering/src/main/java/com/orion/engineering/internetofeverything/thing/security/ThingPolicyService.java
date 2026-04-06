@@ -2,7 +2,7 @@ package com.orion.engineering.internetofeverything.thing.security;
 
 import com.orion.engineering.data.storage.Database;
 import com.orion.engineering.internetofeverything.thing.model.ThingOperation;
-import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +27,7 @@ public class ThingPolicyService
         {
             policy = ThingPolicy.builder()
                             .thingID(thingID)
-                            .allowedOperations(EnumSet.of(ThingOperation.EMPTY))
+                            .operationToAllowedStatusMapper(new HashMap<>())
                             .build();
             database.save(policy);
         }
@@ -35,18 +35,42 @@ public class ThingPolicyService
     }
 
 
-    public void addAllowedThingOperationToThingPolicy(UUID thingID, ThingOperation operation)
+    public void addNameToThingPolicy(UUID thingID, String name)
     {
         ThingPolicy policy = database.getThingPolicyByID(thingID);
-        policy.getAllowedOperations().add(operation);
+        policy.setName(name);
         database.save(policy);
     }
 
 
-    public void removeAllowedThingOperationToThingPolicy(UUID thingID, ThingOperation operation)
+    public void addThingOperationToThingPolicy(UUID thingID, ThingOperation operation)
     {
         ThingPolicy policy = database.getThingPolicyByID(thingID);
-        policy.getAllowedOperations().remove(operation);
+        policy.getOperationToAllowedStatusMapper().put(operation, true);
+        database.save(policy);
+    }
+
+
+    public void removeThingOperationToThingPolicy(UUID thingID, ThingOperation operation)
+    {
+        ThingPolicy policy = database.getThingPolicyByID(thingID);
+        policy.getOperationToAllowedStatusMapper().remove(operation);
+        database.save(policy);
+    }
+
+
+    public void allowThingOperation(UUID thingID, ThingOperation operation)
+    {
+        ThingPolicy policy = database.getThingPolicyByID(thingID);
+        policy.getOperationToAllowedStatusMapper().put(operation, true);
+        database.save(policy);
+    }
+
+
+    public void forbidThingOperation(UUID thingID, ThingOperation operation)
+    {
+        ThingPolicy policy = database.getThingPolicyByID(thingID);
+        policy.getOperationToAllowedStatusMapper().put(operation, false);
         database.save(policy);
     }
 }

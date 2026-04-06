@@ -4,9 +4,8 @@ import com.orion.engineering.core.abstraction.Enumeration;
 
 public enum ThingOperation implements Enumeration
 {
-    EMPTY("Empty"),
-    SUBSCRIBE_TO_MQTT_TOPIC("Subscribe to MQTT Topic"),
-    PUBLISH_TO_MQTT_TOPIC("Publish to MQTT Topic");
+    SUBSCRIBE_TO_MQTT_TOPIC("ioe::subscribe-to-mqtt-topic"),
+    PUBLISH_TO_MQTT_TOPIC("ioe::publish-to-mqtt-topic");
     private String name;
 
 
