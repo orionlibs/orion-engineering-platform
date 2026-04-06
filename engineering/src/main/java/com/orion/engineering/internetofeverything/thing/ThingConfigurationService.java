@@ -11,6 +11,22 @@ import org.springframework.stereotype.Service;
 public class ThingConfigurationService
 {
     @Autowired @Qualifier(value = "mockDatabase") private Database database;
+    @Autowired private ThingEndpointGenerator thingEndpointGenerator;
+
+
+    public ThingConfiguration addDefaultConfigurationToThing(UUID thingID)
+    {
+        ThingConfiguration config = getThingConfiguration(thingID);
+        if(config == null)
+        {
+            config = ThingConfiguration.builder()
+                            .thingID(thingID)
+                            .endpoint(thingEndpointGenerator.generateThingEndpoint(thingID))
+                            .build();
+            database.save(config);
+        }
+        return config;
+    }
 
 
     public ThingConfiguration getThingConfiguration(UUID thingID)

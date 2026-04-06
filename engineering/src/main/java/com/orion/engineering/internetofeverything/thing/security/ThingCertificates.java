@@ -1,6 +1,6 @@
 package com.orion.engineering.internetofeverything.thing.security;
 
-import java.io.File;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 public class ThingCertificates
 {
-    private File certificateFile;
-    private File privateKeyFile;
+    private UUID thingID;
+    private String certificateFile;
+    private String privateKeyFile;
 }
