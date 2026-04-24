@@ -1,8 +1,8 @@
 package com.orion.engineering.simulation.core;
 
-import com.orion.computationalplatform.simulation.event.SimulationEvent;
-import com.orion.computationalplatform.simulation.event.SystemEvent;
-import com.orion.computationalplatform.simulation.event.TargetedEvent;
+import com.orion.engineering.simulation.event.SimulationEvent;
+import com.orion.engineering.simulation.event.SystemEvent;
+import com.orion.engineering.simulation.event.TargetedEvent;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.PriorityQueue;

@@ -1,6 +1,6 @@
 package com.orion.engineering.simulation.core;
 
-import com.orion.computationalplatform.simulation.event.SimulationEvent;
+import com.orion.engineering.simulation.event.SimulationEvent;
 
 /**
  * Marker interface for events dispatched to every registered entity.

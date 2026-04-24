@@ -1,6 +1,6 @@
 package com.orion.engineering.simulation.event;
 
-import com.orion.computationalplatform.simulation.core.BroadcastEvent;
+import com.orion.engineering.simulation.core.BroadcastEvent;
 
 public record TickEvent(long timestamp) implements BroadcastEvent
 {
